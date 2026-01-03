@@ -2,7 +2,8 @@ using UnityEngine;
 using System.Collections.Generic;
 using Random = System.Random;
 using System;
-using UnityEngine.UI;
+using UnityEngine.Tilemaps;
+
 
 [Serializable]
 public class RoomTemplate
