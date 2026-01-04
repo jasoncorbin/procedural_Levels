@@ -9,6 +9,8 @@ public class MarchingSquares : MonoBehaviour
     [SerializeField] Tileset tileset;
     [SerializeField] int scale = 1;
 
+    [SerializeField] LayoutGeneratorRooms layoutGenerator;
+
 
     [ContextMenu("Create Level Geometry")]
     public void CreateLevelGeometry()
@@ -25,22 +27,22 @@ public class MarchingSquares : MonoBehaviour
                 GameObject prefab = tileset.GameTile(tileIndex);
                 if(prefab == null) { continue;}
                 GameObject tile = Instantiate(prefab, generatedLevel.transform);
-                tile.transform.position = new Vector3(x * scale, 0, y * scale);
                 tile.transform.localScale = scaleVector;
+                tile.transform.position = new Vector3(x * scale, 0, y * scale);                
                 string name = "x" + x + "y" + y + "tileIndex" + tileIndex;
                 tile.name = name;   
-
-
             }
+            
+
         }
     }
 
     int CalculateTileIndex(ILevel level, int x, int y)
     {
-        int topLeft = level.IsBlocked(x, y + 1 ) ? 1 : 0;
-        int topRight = level.IsBlocked(x +1,y + 1 ) ? 1 : 0;
-        int bottomLeft = level.IsBlocked(x, y) ? 1 : 0;
-        int bottomRight = level.IsBlocked(x + 1, y + 1 ) ? 1 : 0;
+        int topLeft     = level.IsBlocked(x,     y + 1) ? 1 : 0;
+        int topRight    = level.IsBlocked(x + 1, y + 1) ? 1 : 0;
+        int bottomLeft  = level.IsBlocked(x,     y)     ? 1 : 0;
+        int bottomRight = level.IsBlocked(x + 1, y)     ? 1 : 0;
         int tileIndex = topLeft + topRight * 2 + bottomLeft * 4 + bottomRight * 8;
         return tileIndex;
 

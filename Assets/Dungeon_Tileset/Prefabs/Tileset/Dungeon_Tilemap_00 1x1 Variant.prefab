@@ -5,6 +5,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 146850224174312264, guid: 42d593c95a965ff4191e0f2cc3757545, type: 3}
@@ -55,9 +56,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dungeon_Tilemap_00 1x1 Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 667209136394007026, guid: 42d593c95a965ff4191e0f2cc3757545, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1315784863185850407, guid: 42d593c95a965ff4191e0f2cc3757545, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 0c7c3b012f34a9448937230ac1fbfea3, type: 2}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 42d593c95a965ff4191e0f2cc3757545, type: 3}
