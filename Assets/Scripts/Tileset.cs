@@ -8,7 +8,7 @@ public class Tileset : ScriptableObject
     [SerializeField]
     Color wallColor;
     [SerializeField]
-    GameObject[] tiles = new GameObject[16];
+    TileVariant[] tiles = new TileVariant[16];
 
     public Color WallColor => wallColor;
 
@@ -18,7 +18,7 @@ public class Tileset : ScriptableObject
         {
             return null;
         }
-        return tiles[tileIndex];
+        return tiles[tileIndex].GetRandomTile();
     
     }
     

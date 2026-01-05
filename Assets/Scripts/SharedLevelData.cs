@@ -7,16 +7,17 @@ using Random = System.Random;
 public class SharedLevelData : MonoBehaviour
 {
     
+    
     public static SharedLevelData Instance { get; private set;}
-    [SerializedField] int scale = 1;
-    [SerializedField] int seed = Environment.TickCount;
+    [SerializeField] int scale = 1;
+    [SerializeField] int seed = Environment.TickCount;
 
     Random random;
     public int Scale => scale;
     public Random Rand => random;
 
-    [ContexMenu("Generate New Seed")]
-    public void GenerateNewSeed()
+    [ContextMenu("Generate New Seed")]
+    public void GenerateSeed()
     {
         seed = Environment.TickCount;
         random = new Random(seed);
@@ -35,7 +36,8 @@ public class SharedLevelData : MonoBehaviour
             Debug.LogWarning("duplicate SharedLevelData detected and disabled", this);
         }
             
-        Debug.Log(Instance.GetInstaceID());
+        Debug.Log(Instance.GetInstanceID());
+        random = new Random(seed);
         
     }
 

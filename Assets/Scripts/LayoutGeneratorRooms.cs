@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using System.Data;
 using Random = System.Random;
 
 
 public class LayoutGeneratorRooms : MonoBehaviour
 {
-    [SerializeField] int seed = Environment.TickCount;
+    
     [SerializeField] RoomLevelLayoutConfiguration levelConfig;
 
 
@@ -18,13 +17,15 @@ public class LayoutGeneratorRooms : MonoBehaviour
 
     Random random;
     Level level;
+    
     Dictionary<RoomTemplate, int> availableRooms;
 
     [ContextMenu("Generate Level Layout")]
     
-    public void GenerateLayout()
+    public Level GenerateLevel()
     {
-        random = new Random(seed);
+        SharedLevelData.Instance.ResetRandom();
+        random = SharedLevelData.Instance.Rand;
         availableRooms = levelConfig.GetAvailableRooms();
         openDoorways = new List<Hallway>();
         level = new Level(levelConfig.Width, levelConfig.Length);
@@ -37,11 +38,18 @@ public class LayoutGeneratorRooms : MonoBehaviour
         hallways.ForEach(h => openDoorways.Add(h));
         level.AddRoom(room);
 
+
         Hallway selectedEntryway = openDoorways[random.Next(0, openDoorways.Count)];
         addRooms();
-        Debug.Log(selectedEntryway.StartPositionAbsolute);
+        
+
+        int startRoomIndex = random.Next(0, level.Room.Length);
+        Room randomStartRoom = level.Room[startRoomIndex];
+        level.playerStartRoom = randomStartRoom;
+
         DrawLayout(selectedEntryway, roomRect);
 
+        return level;
 
     }
 
@@ -49,7 +57,8 @@ public class LayoutGeneratorRooms : MonoBehaviour
 
     public void GenerateNewSeed()
     {
-        seed = Environment.TickCount;
+        SharedLevelData.Instance.GenerateSeed();
+        
     }
     
     [ContextMenu("Generate New Seed and Level")]
@@ -57,7 +66,7 @@ public class LayoutGeneratorRooms : MonoBehaviour
     public void GenerateNewSeedAndLevel()
     {
         GenerateNewSeed();
-        GenerateLayout();
+        GenerateLevel();
     }
 
     RectInt GetStartRoomRect(RoomTemplate roomTemplate)

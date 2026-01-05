@@ -1,4 +1,4 @@
-using UnityEditor;
+/*using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ public class MarchingSquaresEditor : Editor
 
         // Find the layout generator in the scene
         LayoutGeneratorRooms layout =
-            Object.FindObjectOfType<LayoutGeneratorRooms>();
+        Object.FindAnyObjectByType<LayoutGeneratorRooms>();
 
         GUILayout.Space(8);
         EditorGUILayout.LabelField("Geometry Generation", EditorStyles.boldLabel);
@@ -80,6 +80,108 @@ public class MarchingSquaresEditor : Editor
 
     private void SeedAndLevel(MarchingSquares geo, LayoutGeneratorRooms layout)
     {
+        layout.GenerateNewSeedAndLevel();
+        geo.CreateLevelGeometry();
+    }
+
+    // -------- HELPERS --------
+
+    private Transform GetGeneratedParent(MarchingSquares geo)
+    {
+        var so = new SerializedObject(geo);
+        var prop = so.FindProperty("generatedLevel");
+        if (prop == null) return null;
+
+        return (prop.objectReferenceValue as GameObject)?.transform;
+    }
+}
+*/
+
+// MarchingSquaresEditor.cs
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+
+[CustomEditor(typeof(MarchingSquares))]
+public class MarchingSquaresEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        DrawDefaultInspector();
+
+        var geo = (MarchingSquares)target;
+
+        // Find the layout generator in the scene
+        LayoutGeneratorRooms layout = Object.FindAnyObjectByType<LayoutGeneratorRooms>();
+
+        GUILayout.Space(8);
+        EditorGUILayout.LabelField("Geometry Generation", EditorStyles.boldLabel);
+
+        if (GUILayout.Button("Create Level Geometry"))
+        {
+            EditorApplication.delayCall += () => Run(geo, layout, GeometryOnly);
+            GUIUtility.ExitGUI();
+        }
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Seed + Layout", EditorStyles.boldLabel);
+
+        using (new EditorGUI.DisabledScope(layout == null))
+        {
+            if (GUILayout.Button("Generate New Seed"))
+            {
+                EditorApplication.delayCall += () => Run(geo, layout, SeedOnly);
+                GUIUtility.ExitGUI();
+            }
+
+            if (GUILayout.Button("Generate New Seed And Level"))
+            {
+                EditorApplication.delayCall += () => Run(geo, layout, SeedAndLevel);
+                GUIUtility.ExitGUI();
+            }
+        }
+    }
+
+    private void Run(
+        MarchingSquares geo,
+        LayoutGeneratorRooms layout,
+        System.Action<MarchingSquares, LayoutGeneratorRooms> action)
+    {
+        if (geo == null) return;
+
+        var parent = GetGeneratedParent(geo);
+        if (parent != null)
+            Undo.RegisterFullObjectHierarchyUndo(parent.gameObject, "Level Generation");
+
+        Undo.RecordObject(geo, "Marching Squares");
+        if (layout != null) Undo.RecordObject(layout, "Layout Generation");
+
+        action.Invoke(geo, layout);
+
+        EditorUtility.SetDirty(geo);
+        if (layout != null) EditorUtility.SetDirty(layout);
+
+        EditorSceneManager.MarkSceneDirty(geo.gameObject.scene);
+        SceneView.RepaintAll();
+    }
+
+    // -------- ACTIONS --------
+
+    private void GeometryOnly(MarchingSquares geo, LayoutGeneratorRooms layout)
+    {
+        geo.CreateLevelGeometry();
+    }
+
+    private void SeedOnly(MarchingSquares geo, LayoutGeneratorRooms layout)
+    {
+        if (layout == null) return;
+        layout.GenerateNewSeed();
+        geo.CreateLevelGeometry();
+    }
+
+    private void SeedAndLevel(MarchingSquares geo, LayoutGeneratorRooms layout)
+    {
+        if (layout == null) return;
         layout.GenerateNewSeedAndLevel();
         geo.CreateLevelGeometry();
     }
