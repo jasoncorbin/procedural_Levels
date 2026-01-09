@@ -1,11 +1,14 @@
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class LevelBuilder : MonoBehaviour
 {
     [SerializeField] LayoutGeneratorRooms layoutGeneratorRooms;
     [SerializeField] MarchingSquares marchingSquares;
     [SerializeField] NavMeshSurface navMeshSurface;
+    [SerializeField] RoomDecorator roomDecorator;
+
 
 
     void Start()
@@ -28,6 +31,7 @@ public class LevelBuilder : MonoBehaviour
         Level level = layoutGeneratorRooms.GenerateLevel();
 
         marchingSquares.CreateLevelGeometry();
+        roomDecorator.PlaceItems(level);
         navMeshSurface.BuildNavMesh();
 
         Room startRoom = level.playerStartRoom;
@@ -35,7 +39,16 @@ public class LevelBuilder : MonoBehaviour
         Vector3 playerPosition = LevelPositionToWorldPosition(roomCenter);
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        player.transform.position = playerPosition;
+        NavMeshAgent playerNavMeshAgent = player.GetComponent<NavMeshAgent>();
+        if(playerNavMeshAgent == null)
+        {
+            player.transform.position = playerPosition;
+        }
+        else
+        {
+            playerNavMeshAgent.Warp(playerPosition);
+        }
+
 
     }
 

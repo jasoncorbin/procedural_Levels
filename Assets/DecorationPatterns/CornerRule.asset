@@ -9,12 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd946f92371755745a92507bd1ff5abe, type: 3}
+  m_Script: {fileID: 11500000, guid: dab613e9259d7714880813ff7544afeb, type: 3}
   m_Name: CornerRule
   m_EditorClassIdentifier: 
-  roomTypes: 1
-  prefab: {fileID: 8021531883433345482, guid: bb9fa583698bef948a28f5e0237a343b, type: 3}
-  prefabRotation: 0
+  prefab: {fileID: 0}
   placement:
     array: 04000000040000000400000002000000
     width: 2
@@ -23,5 +21,3 @@ MonoBehaviour:
     array: 04000000040000000400000003000000
     width: 2
     height: 2
-  centerHorizontally: 0
-  centerVertically: 0

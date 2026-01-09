@@ -43,8 +43,8 @@ public class LayoutGeneratorRooms : MonoBehaviour
         addRooms();
         
 
-        int startRoomIndex = random.Next(0, level.Room.Length);
-        Room randomStartRoom = level.Room[startRoomIndex];
+        int startRoomIndex = random.Next(0, level.Rooms.Length);
+        Room randomStartRoom = level.Rooms[startRoomIndex];
         level.playerStartRoom = randomStartRoom;
 
         DrawLayout(selectedEntryway, roomRect);
@@ -95,16 +95,16 @@ public class LayoutGeneratorRooms : MonoBehaviour
         levelLayoutDisplay.transform.localScale = new Vector3(level.Width, level.Length, 1);
         layoutTexture.FillWithColor(Color.black);
 
-        foreach (Room room in level.Room)
+        foreach (Room rooms in level.Rooms)
         {
-            if (room.LayoutTexture != null)
+            if (rooms.LayoutTexture != null)
             {
-                layoutTexture.DrawTexture(room.LayoutTexture, room.Area);
+                layoutTexture.DrawTexture(rooms.LayoutTexture, rooms.Area);
                 continue;
             }
             else
             {
-                layoutTexture.DrawRectangle(room.Area, Color.white);
+                layoutTexture.DrawRectangle(rooms.Area, Color.white);
             }
             
         }
@@ -185,7 +185,7 @@ public class LayoutGeneratorRooms : MonoBehaviour
 
     void addRooms()
     {
-        while (openDoorways.Count > 0 && level.Room.Length < levelConfig.MaxRoomCount && availableRooms.Count > 0)
+        while (openDoorways.Count > 0 && level.Rooms.Length < levelConfig.MaxRoomCount && availableRooms.Count > 0)
         {
             int randomIndex = random.Next(0, openDoorways.Count);
             Hallway selectedEntryway = openDoorways[randomIndex];
@@ -212,7 +212,7 @@ public class LayoutGeneratorRooms : MonoBehaviour
     bool IsRoomCandidateValid(RectInt roomCandidateRect)
     {
         RectInt levelRect = new RectInt(1, 1, levelConfig.Width - 2, levelConfig.Length - 2);
-        return levelRect.Contains(roomCandidateRect) && !CheckRoomOverlap(roomCandidateRect, level.Room, level.Hallways, levelConfig.MinRoomDistance);
+        return levelRect.Contains(roomCandidateRect) && !CheckRoomOverlap(roomCandidateRect, level.Rooms, level.Hallways, levelConfig.MinRoomDistance);
     }
 
     bool CheckRoomOverlap(RectInt roomCandidateRect, Room[] rooms, Hallway[] hallways, int minRoomDistance)
