@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [CreateAssetMenu(fileName = "Tileset", menuName = "Custom/Procedural Generation/Tileset")]
 public class Tileset : ScriptableObject
@@ -12,14 +11,12 @@ public class Tileset : ScriptableObject
 
     public Color WallColor => wallColor;
 
-    public GameObject GameTile(int tileIndex)
+    public TileBase GameTile(int tileIndex)
     {
-        if(tileIndex >= tiles.Length)
+        if (tileIndex >= tiles.Length)
         {
             return null;
         }
         return tiles[tileIndex].GetRandomTile();
-    
     }
-    
 }

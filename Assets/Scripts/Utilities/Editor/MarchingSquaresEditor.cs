@@ -89,10 +89,10 @@ public class MarchingSquaresEditor : Editor
     private Transform GetGeneratedParent(MarchingSquares geo)
     {
         var so = new SerializedObject(geo);
-        var prop = so.FindProperty("generatedLevel");
+        var prop = so.FindProperty("tilemap");
         if (prop == null) return null;
 
-        return (prop.objectReferenceValue as GameObject)?.transform;
+        return (prop.objectReferenceValue as UnityEngine.Tilemaps.Tilemap)?.transform;
     }
 }
 */
@@ -191,9 +191,9 @@ public class MarchingSquaresEditor : Editor
     private Transform GetGeneratedParent(MarchingSquares geo)
     {
         var so = new SerializedObject(geo);
-        var prop = so.FindProperty("generatedLevel");
+        var prop = so.FindProperty("tilemap");
         if (prop == null) return null;
 
-        return (prop.objectReferenceValue as GameObject)?.transform;
+        return (prop.objectReferenceValue as UnityEngine.Tilemaps.Tilemap)?.transform;
     }
 }
