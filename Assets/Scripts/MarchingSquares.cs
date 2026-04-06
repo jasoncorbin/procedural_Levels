@@ -35,7 +35,7 @@ public class MarchingSquares : MonoBehaviour
                 int tileIndex = CalculateTileIndex(level, x, y);
                 TileBase tile = tileset.GameTile(tileIndex);
                 if (tile == null) { continue; }
-                tilemap.SetTile(new Vector3Int(x - 1, level.Length - 2 - y, 0), tile);
+                tilemap.SetTile(new Vector3Int(x - 1, y - 1, 0), tile);
             }
         }
     }

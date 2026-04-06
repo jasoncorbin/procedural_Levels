@@ -77,11 +77,14 @@ public class LevelBuilder : MonoBehaviour
         }
 
         BoundsInt bounds = tilemap.cellBounds;
+        // MarchingSquares places texture coord (x,y) at tilemap cell (x-1, y-1),
+        // so apply the same offset when converting roomCenter to a starting cell.
         Vector3Int centerCell = new(
-            Mathf.RoundToInt(roomCenter.x),
-            Mathf.RoundToInt(roomCenter.y),
+            Mathf.RoundToInt(roomCenter.x) - 1,
+            Mathf.RoundToInt(roomCenter.y) - 1,
             0
         );
+        Debug.Log($"LevelBuilder: spiral search start cell={centerCell}, roomCenter={roomCenter}");
 
         int maxRadius = Mathf.Max(bounds.size.x, bounds.size.y);
 
@@ -124,6 +127,7 @@ public class LevelBuilder : MonoBehaviour
             originalType = rb.bodyType;
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.linearVelocity = Vector2.zero;
+            Debug.Log($"LevelBuilder: Rigidbody2D set to Kinematic, placing player at {position}");
         }
 
         player.transform.position = position;
@@ -131,6 +135,9 @@ public class LevelBuilder : MonoBehaviour
         yield return SpawnDelay;
 
         if (rb != null)
+        {
             rb.bodyType = originalType;
+            Debug.Log($"LevelBuilder: Rigidbody2D restored to {originalType}");
+        }
     }
 }
