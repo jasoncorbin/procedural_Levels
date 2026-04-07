@@ -10,6 +10,9 @@ public class TileVariant
 
     public TileBase GetRandomTile()
     {
+        Debug.Log("TileVariant.GetRandomTile: variants length = " +
+                  (variants != null ? variants.Length.ToString() : "NULL array"));
+
         if (variants == null || variants.Length == 0)
         {
             Debug.LogWarning("TileVariant has no variants assigned.");
@@ -20,6 +23,9 @@ public class TileVariant
         if (random == null) random = new Random(Environment.TickCount);
 
         int randomIndex = random.Next(variants.Length);
-        return variants[randomIndex];
+        TileBase result = variants[randomIndex];
+        Debug.Log("TileVariant.GetRandomTile: returning index " + randomIndex +
+                  " = " + (result != null ? result.name : "NULL"));
+        return result;
     }
 }

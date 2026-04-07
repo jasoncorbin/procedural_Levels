@@ -3,7 +3,7 @@ using UnityEngine;
 public class FollowCamera : MonoBehaviour
 {
     [SerializeField] float cameraHeight = 10f;
-    [SerializeField] float followSmoothing = 0.15f;
+    [SerializeField, Range(0.1f, 0.15f)] float followSmoothing = 0.1f;
 
     Transform target;
 
@@ -24,7 +24,10 @@ public class FollowCamera : MonoBehaviour
     void LateUpdate()
     {
         if (target == null) return;
-        transform.position = Vector3.Lerp(transform.position, TargetPosition(), followSmoothing);
+
+        Vector3 goal = TargetPosition();
+        goal.z = -10f;
+        transform.position = Vector3.Lerp(transform.position, goal, followSmoothing);
     }
 
     Vector3 TargetPosition() => new Vector3(target.position.x, target.position.y, -cameraHeight);

@@ -73,7 +73,8 @@ public class LayoutGeneratorRooms : MonoBehaviour
     {
         RectInt roomSize = roomTemplate.GenerateRoomCandiateRect(random);
         int roomWidth = Mathf.Min(
-            random.Next(roomTemplate.RoomWidthMin, roomTemplate.RoomWidthMax),
+            random.Next(roomTemplate.RoomWidthMin,
+                Mathf.Max(roomTemplate.RoomWidthMin + 1, roomTemplate.RoomWidthMax)),
             levelConfig.Width / 4
         );
         int availableWidthX = Mathf.Max(1, levelConfig.Width / 2 - roomWidth);
@@ -81,7 +82,8 @@ public class LayoutGeneratorRooms : MonoBehaviour
         int roomX = randomX + (levelConfig.Width / 4);
 
         int roomLength = Mathf.Min(
-            random.Next(roomTemplate.RoomLengthMin, roomTemplate.RoomLengthMax),
+            random.Next(roomTemplate.RoomLengthMin,
+                Mathf.Max(roomTemplate.RoomLengthMin + 1, roomTemplate.RoomLengthMax)),
             levelConfig.Length / 4
         );
         int availableLengthY = Mathf.Max(1, levelConfig.Length / 2 - roomLength);

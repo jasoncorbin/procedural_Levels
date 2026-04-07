@@ -67,7 +67,7 @@ procedural_levels (scene)
 ### Modified for 2D conversion
 - MarchingSquares.cs — reads Texture2D, writes to Tilemap
   - Uses TextureBasedLevel to read level data
-  - Places tiles at Vector3Int(x-1, y-1, 0) — no Y flip
+  - Places tiles at Vector3Int(x, y, 0) — full level size, no border trim
   - Y axis matches layout preview orientation exactly
   - Sets tilemap.tileAnchor = (0.5, 0.5, 0) at runtime
   - Tilemap reference: DungeonTilemap
@@ -75,7 +75,7 @@ procedural_levels (scene)
   - Removed NavMesh, uses 2D player spawn
   - Has floorTile and wallTile SerializeField references
   - Spawns player using spiral search for floor tile (tile == floorTile)
-  - FindFloorSpawn applies (-1,-1) offset to match MarchingSquares cell coords
+  - FindFloorSpawn uses raw roomCenter coords (no offset — tiles placed at (x,y,0) directly)
   - SpawnPlayerDelayed coroutine: sets Kinematic, positions player, waits 0.5s, restores Dynamic
   - GetStartRoomRect has safety clamps: room size capped at levelConfig/4, available range Min(1,...)
 - DirectedAgent.cs — 2D player controller

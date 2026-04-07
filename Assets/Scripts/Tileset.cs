@@ -13,10 +13,17 @@ public class Tileset : ScriptableObject
 
     public TileBase GameTile(int tileIndex)
     {
+        Debug.Log("GameTile called with index: " + tileIndex +
+                  ", tiles length: " + tiles.Length);
+
         if (tileIndex >= tiles.Length)
         {
+            Debug.Log("Index out of range!");
             return null;
         }
-        return tiles[tileIndex].GetRandomTile();
+
+        TileBase result = tiles[tileIndex].GetRandomTile();
+        Debug.Log("Returning tile: " + (result != null ? result.name : "NULL"));
+        return result;
     }
 }

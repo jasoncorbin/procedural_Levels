@@ -9,8 +9,7 @@ public class LevelBuilder : MonoBehaviour
     [SerializeField] MarchingSquares marchingSquares;
     [SerializeField] RoomDecorator roomDecorator;
     [SerializeField] LevelSaveManager levelSaveManager;
-    [SerializeField] TileBase floorTile;
-    [SerializeField] TileBase wallTile;
+    [SerializeField] Tileset tileset;
 
     static readonly WaitForSeconds SpawnDelay = new(0.5f);
 
@@ -63,6 +62,7 @@ public class LevelBuilder : MonoBehaviour
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        StopAllCoroutines(); // prevent overlapping spawn coroutines leaving rb stuck as Kinematic
         StartCoroutine(SpawnPlayerDelayed(player, rb, spawnPos));
     }
 
@@ -77,14 +77,18 @@ public class LevelBuilder : MonoBehaviour
         }
 
         BoundsInt bounds = tilemap.cellBounds;
-        // MarchingSquares places texture coord (x,y) at tilemap cell (x-1, y-1),
-        // so apply the same offset when converting roomCenter to a starting cell.
+        // Tiles are placed at (x, y, 0) matching texture coords directly.
         Vector3Int centerCell = new(
-            Mathf.RoundToInt(roomCenter.x) - 1,
-            Mathf.RoundToInt(roomCenter.y) - 1,
+            Mathf.RoundToInt(roomCenter.x),
+            Mathf.RoundToInt(roomCenter.y),
             0
         );
         Debug.Log($"LevelBuilder: spiral search start cell={centerCell}, roomCenter={roomCenter}");
+
+        // Wall tile is index 15 in whatever tileset is currently active.
+        // Comparing against the tileset's own wall reference means this works
+        // regardless of which tileset (GrassField, Dungeon, etc.) is assigned.
+        TileBase wallTile = tileset != null ? tileset.GameTile(15) : null;
 
         int maxRadius = Mathf.Max(bounds.size.x, bounds.size.y);
 
@@ -97,12 +101,12 @@ public class LevelBuilder : MonoBehaviour
                     if (Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius) continue;
 
                     Vector3Int cell = new(centerCell.x + dx, centerCell.y + dy, 0);
-                    TileBase tile = tilemap.GetTile(cell);
+                    TileBase foundTile = tilemap.GetTile(cell);
 
-                    if (tile == floorTile)
+                    if (foundTile != null && foundTile != wallTile)
                     {
                         Vector3 worldPos = tilemap.GetCellCenterWorld(cell);
-                        Debug.Log($"LevelBuilder: floor cell found at {cell}, world {worldPos}");
+                        Debug.Log($"LevelBuilder: floor cell found at {cell}, tile={foundTile.name}, world {worldPos}");
                         return worldPos;
                     }
                 }
@@ -115,16 +119,14 @@ public class LevelBuilder : MonoBehaviour
             bounds.y + bounds.size.y / 2,
             0
         ));
-        Debug.LogError($"LevelBuilder: no floor tile found near {centerCell}. Is floorTile assigned? Using tilemap centre {fallback}.");
+        Debug.LogError($"LevelBuilder: no non-wall tile found near {centerCell}. Using tilemap centre {fallback}.");
         return fallback;
     }
 
     IEnumerator SpawnPlayerDelayed(GameObject player, Rigidbody2D rb, Vector3 position)
     {
-        RigidbodyType2D originalType = RigidbodyType2D.Dynamic;
         if (rb != null)
         {
-            originalType = rb.bodyType;
             rb.bodyType = RigidbodyType2D.Kinematic;
             rb.linearVelocity = Vector2.zero;
             Debug.Log($"LevelBuilder: Rigidbody2D set to Kinematic, placing player at {position}");
@@ -136,8 +138,8 @@ public class LevelBuilder : MonoBehaviour
 
         if (rb != null)
         {
-            rb.bodyType = originalType;
-            Debug.Log($"LevelBuilder: Rigidbody2D restored to {originalType}");
+            rb.bodyType = RigidbodyType2D.Dynamic; // always restore to Dynamic explicitly
+            Debug.Log("LevelBuilder: Rigidbody2D restored to Dynamic");
         }
     }
 }
