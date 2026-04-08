@@ -36,7 +36,7 @@ public class LevelBuilder : MonoBehaviour
         }
 
         Level level = layoutGeneratorRooms.GenerateLevel();
-        marchingSquares.CreateLevelGeometry();
+        marchingSquares.CreateLevelGeometry(level);
         roomDecorator.PlaceItems(level);
 
         Debug.Log("Scale: " + SharedLevelData.Instance.Scale);

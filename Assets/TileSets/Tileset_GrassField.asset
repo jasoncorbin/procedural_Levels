@@ -27,13 +27,13 @@ MonoBehaviour:
   - variants:
     - {fileID: 11400000, guid: 3828eebdcf5ae3642b459bb53b1ab3e8, type: 2}
   - variants:
-    - {fileID: 11400000, guid: 15e6c86823642724682d28b26dacfc5a, type: 2}
+    - {fileID: 11400000, guid: 62f908043ede2af4e89542b39702fba3, type: 2}
   - variants:
     - {fileID: 11400000, guid: 734b994884b694840b17fa05452e58ef, type: 2}
   - variants:
     - {fileID: 11400000, guid: 62f908043ede2af4e89542b39702fba3, type: 2}
   - variants:
-    - {fileID: 11400000, guid: e64a6a7b8f274a848b3331fffc09275b, type: 2}
+    - {fileID: 11400000, guid: 62f908043ede2af4e89542b39702fba3, type: 2}
   - variants:
     - {fileID: 11400000, guid: 2d6599016986acd40bb08160f54a697d, type: 2}
   - variants:

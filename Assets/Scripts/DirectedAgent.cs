@@ -13,35 +13,23 @@ public class DirectedAgent : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.freezeRotation = true;
-            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-        }
-        else
-        {
-            Debug.LogWarning("DirectedAgent: no Rigidbody2D found on " + gameObject.name);
-        }
-
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         animator = GetComponent<Animator>();
+
         inputActions = new InputSystem_Actions();
+        inputActions.Player.Enable();
     }
 
-    void OnEnable()
-    {
-        inputActions?.Player.Enable();
-    }
-
-    void OnDisable()
+    void OnDestroy()
     {
         inputActions?.Player.Disable();
+        inputActions?.Dispose();
     }
 
     void Update()
     {
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-
-        Debug.Log("MOVE INPUT: " + moveInput + " | Speed: " + moveInput.magnitude);
 
         if (animator != null)
         {
@@ -53,7 +41,7 @@ public class DirectedAgent : MonoBehaviour
 
     void FixedUpdate()
     {
-        Debug.Log("FIXED UPDATE - applying velocity: " + (moveInput * moveSpeed));
+        if (rb == null) return;
         rb.linearVelocity = moveInput * moveSpeed;
     }
 }

@@ -141,6 +141,12 @@ procedural_levels (scene)
 - Compression: None
 
 ## Known Issues / TODO
+- **ACTIVE** Player movement broken — DirectedAgent not receiving input correctly;
+  movement restricted to up/down with wobble. Needs investigation in DirectedAgent.cs
+  and FollowCamera.cs. Camera wobble partially fixed with Rigidbody2D interpolation
+  but may have broken player input in the process.
+- LevelGeometryGeneration GameObject was deleted from scene; LevelBuilder now references
+  LevelGeometry GameObject for the MarchingSquares component — verify Inspector assignment
 - Player sprite is placeholder (white Knob)
 - No character animations yet
 - Rule Tile neighbor rules not configured (walls use default sprite only)
@@ -150,6 +156,7 @@ procedural_levels (scene)
 - Directional Light should be replaced with 2D lights eventually
 - AI Navigation package can be removed once confirmed unused
 - ~~Layout map and tilemap orientation mismatch~~ — RESOLVED: Y axis no longer flipped, both match
+- ~~Only floor/wall tiles rendering~~ — RESOLVED: Tileset_GrassField working with all 16 tile slots assigned
 
 ## Next Steps (Priority Order)
 1. Player character sprite and animations
