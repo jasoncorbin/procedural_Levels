@@ -69,8 +69,8 @@ procedural_levels (scene)
   - Uses TextureBasedLevel to read level data
   - Places tiles at Vector3Int(x, y, 0) — full level size, no border trim
   - Y axis matches layout preview orientation exactly
-  - Sets tilemap.tileAnchor = (0.5, 0.5, 0) at runtime
   - Tilemap reference: DungeonTilemap
+  - **DO NOT set tilemap.tileAnchor in code** — must remain X:0, Y:0, Z:0 in Inspector
 - LevelBuilder.cs — orchestrates generation
   - Removed NavMesh, uses 2D player spawn
   - Has floorTile and wallTile SerializeField references
@@ -94,10 +94,10 @@ procedural_levels (scene)
   - Uses reflection to read/write SharedLevelData.seed (private field)
 
 ## Tilemap Configuration (DungeonTilemap)
-- Tile Anchor: X:0.5, Y:0.5, Z:0 (set at runtime by MarchingSquares)
+- Tile Anchor: X:0, Y:0, Z:0 — **NEVER set in code, Inspector only**
 - Tilemap Collider 2D:
   - Composite Operation: Merge
-  - Offset: X:0, Y:0
+  - Offset: X:-0.5, Y:-0.5
   - Use Delaunay Mesh: false
 - Composite Collider 2D:
   - Geometry Type: Polygons
@@ -105,6 +105,23 @@ procedural_levels (scene)
 - Rigidbody2D: Static
 - Sorting Layer: Ground, Order: 0
 - Chunk Culling Bounds: Manual, X:100, Y:100
+
+## Working Tilemap Settings
+These exact settings must be preserved — changing any of these will break collision or rendering:
+- Grid Cell Size: 1, 1, 0
+- Tile Anchor: 0, 0, 0 — NEVER set in code, Inspector only
+- Tilemap Collider 2D Offset: -0.5, -0.5
+- Composite Operation: Merge
+- Geometry Type: Polygons
+- Generation Type: Synchronous
+- Sprite reimport required after drawing or editing custom physics shapes in Sprite Editor
+
+## Tile Collider Types (GrassField)
+- GrassField_0: Collider Type **None** (pure floor, no collision)
+- GrassField_1 through GrassField_14: Collider Type **Sprite** (custom physics shapes drawn in Sprite Editor)
+- GrassField_15: Collider Type **Grid** (pure wall, full cell collision)
+- After drawing/editing physics shapes in Sprite Editor: reimport the sprite sheet to apply changes
+- Use Tools > Fix Tile Colliders editor script to batch-set collider types
 
 ## Tile Assets
 - DungeonFloor (Rule Tile)
@@ -141,12 +158,6 @@ procedural_levels (scene)
 - Compression: None
 
 ## Known Issues / TODO
-- **ACTIVE** Player movement broken — DirectedAgent not receiving input correctly;
-  movement restricted to up/down with wobble. Needs investigation in DirectedAgent.cs
-  and FollowCamera.cs. Camera wobble partially fixed with Rigidbody2D interpolation
-  but may have broken player input in the process.
-- LevelGeometryGeneration GameObject was deleted from scene; LevelBuilder now references
-  LevelGeometry GameObject for the MarchingSquares component — verify Inspector assignment
 - Player sprite is placeholder (white Knob)
 - No character animations yet
 - Rule Tile neighbor rules not configured (walls use default sprite only)
@@ -155,18 +166,28 @@ procedural_levels (scene)
 - NavMesh components may still exist on some GameObjects
 - Directional Light should be replaced with 2D lights eventually
 - AI Navigation package can be removed once confirmed unused
+- Physics Material 2D with zero friction needed for player to slide cleanly around corners
+- Hallways are 1 tile wide — consider widening to 2 tiles
+- ArgumentOutOfRangeException possible in GetStartRoomRect with certain RoomTemplate configs
 - ~~Layout map and tilemap orientation mismatch~~ — RESOLVED: Y axis no longer flipped, both match
 - ~~Only floor/wall tiles rendering~~ — RESOLVED: Tileset_GrassField working with all 16 tile slots assigned
+- ~~Player movement broken~~ — RESOLVED: Fixed OnEnable/Awake race condition in DirectedAgent.cs
+- ~~Camera wobble~~ — RESOLVED: Rigidbody2D interpolation + LateUpdate follow
+- ~~Tile collision broken~~ — RESOLVED: pixel-accurate collision via custom physics shapes on transition tiles
+- ~~Tile Anchor code override~~ — RESOLVED: tilemap.tileAnchor removed from MarchingSquares.cs
+- ~~Duplicate LevelGeometryGeneration~~ — RESOLVED: removed from scene
+- ~~Organic room shapes~~ — RESOLVED: chamfered corners implemented in MarchingSquares.cs
+- ~~GrassField tileset incomplete~~ — RESOLVED: all 16 tiles complete with correct collider types
 
 ## Next Steps (Priority Order)
-1. Player character sprite and animations
-2. Rule Tile wall polish (corner/edge variants)
-3. Enemy system
-4. Combat system
-5. Save/load story levels
-6. UI/HUD (health, minimap, inventory)
-7. Multiple dungeon tile themes
-8. Sound effects and music
+1. Create dungeon stone tileset (Photoshop, 128x128 sheet, 4x4 grid, 32x32 tiles)
+2. Fix ArgumentOutOfRangeException in GetStartRoomRect for edge-case RoomTemplate configs
+3. Add Physics Material 2D with zero friction to player collider
+4. Widen hallways to 2 tiles
+5. Enemy system
+6. Combat system
+7. Save/load story levels
+8. UI/HUD (health, minimap, inventory)
 
 ## Packages Installed
 - Universal RP (URP)
